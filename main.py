@@ -32,7 +32,7 @@ def main():
 
 def generate_content(client, messages, verbose):
     response = client.models.generate_content(
-        model=config.model_name,
+        model="gemini-2.0-flash-001",
         contents=messages,
         config=types.GenerateContentConfig(system_instruction=config.system_prompt),
     )
