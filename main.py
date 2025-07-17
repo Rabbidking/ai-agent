@@ -49,18 +49,33 @@ def generate_content(client, messages, verbose):
 
     function_responses = []
     for function_call_part in response.function_calls:
+        print(f"DEBUG: About to call function: {function_call_part.name}")
+        print(f"DEBUG: Function args: {function_call_part.args}")
+        
         function_call_result = call_function(function_call_part, verbose)
+        
+        print(f"DEBUG: Function call completed")
+        print(f"DEBUG: Result type: {type(function_call_result)}")
+        
         if (
             not function_call_result.parts
             or not function_call_result.parts[0].function_response
         ):
             raise Exception("empty function call result")
+        
+        response_data = function_call_result.parts[0].function_response.response
+        print(f"DEBUG: Response data: {response_data}")
+        
         if verbose:
-            print(f"-> {function_call_result.parts[0].function_response.response}")
+            print(f"-> {response_data}")
+        
+        if "result" in response_data:
+            print(f"DEBUG: About to print result: {repr(response_data['result'])}")
+            print(response_data["result"])
+        elif "error" in response_data:
+            print(f"Error: {response_data['error']}")
+        
         function_responses.append(function_call_result.parts[0])
-
-    if not function_responses:
-        raise Exception("no function responses generated, exiting.")
 
 
 if __name__ == "__main__":
